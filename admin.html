@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — World Cup Pool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gp: #1a5e2a; --gl: #2e8b47; --gold: #C9A84C;
+      --bg: #faf7f0; --white: #fff;
+      --text: #1a1a1a; --muted: #666;
+      --border: rgba(0,0,0,0.12); --border-mid: rgba(0,0,0,0.22);
+      --surface: #f4f1ea;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    .header {
+      background: var(--gp);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      color: #fff; font-size: 1.8rem;
+      margin-bottom: 4px;
+    }
+    .header p { color: rgba(255,255,255,0.65); font-size: 14px; }
+
+    .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; color: var(--gp);
+      margin-bottom: 0.3rem;
+    }
+    .card-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.2rem; line-height: 1.5; }
+
+    .stage-select {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+      margin-bottom: 1.4rem;
+    }
+    .stage-btn {
+      border: 1.5px solid var(--border-mid);
+      border-radius: 9px;
+      padding: 10px 8px;
+      background: var(--white);
+      cursor: pointer;
+      text-align: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .stage-btn:hover { border-color: var(--gl); background: #f0faf3; }
+    .stage-btn.active { border-color: var(--gp); background: #e6f7eb; color: var(--gp); }
+    .stage-pts { font-size: 11px; color: var(--muted); margin-top: 3px; }
+    .stage-btn.active .stage-pts { color: var(--gp); }
+
+    .section-label {
+      font-size: 12px; font-weight: 500;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 10px;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+      margin-bottom: 1.4rem;
+    }
+    .team-check {
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: 9px 8px;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      user-select: none;
+    }
+    .team-check:hover { border-color: var(--gl); }
+    .team-check.checked { border-color: var(--gp); background: #e6f7eb; color: var(--gp); }
+    .team-flag { font-size: 1.4rem; }
+    .check-icon { font-size: 14px; color: var(--gp); display: none; }
+    .team-check.checked .check-icon { display: block; }
+
+    .selected-summary {
+      background: var(--surface);
+      border-radius: 9px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+      min-height: 42px;
+      line-height: 1.6;
+    }
+    .selected-summary strong { color: var(--text); }
+
+    .apply-btn {
+      width: 100%; padding: 14px;
+      background: var(--gp); color: #fff;
+      border: none; border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 500;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .apply-btn:hover { background: var(--gl); }
+    .apply-btn:disabled { background: #aaa; cursor: default; }
+
+    .result-box {
+      display: none;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 1rem;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .result-box.success { background: #e6f7eb; border: 1px solid #a8d8b0; color: #1a5e2a; }
+    .result-box.error   { background: #fde8e8; border: 1px solid #f09595; color: #a32d2d; }
+
+    .history-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+    .history-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 0;
+      border-bottom: 0.5px solid var(--border);
+      font-size: 13px;
+    }
+    .history-row:last-child { border-bottom: none; }
+    .history-stage { font-weight: 500; }
+    .history-teams { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .history-pts { font-weight: 500; color: var(--gp); }
+    .undo-btn {
+      background: none; border: 1px solid var(--border-mid);
+      border-radius: 6px; padding: 3px 10px;
+      font-size: 12px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--muted);
+    }
+    .undo-btn:hover { background: #fde8e8; border-color: #f09595; color: #a32d2d; }
+
+    .leaderboard-mini .lb-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 0.5px solid var(--border);
+      font-size: 14px;
+    }
+    .leaderboard-mini .lb-row:last-child { border-bottom: none; }
+    .lb-rank { font-weight: 700; width: 28px; color: var(--muted); }
+    .lb-rank.r1 { color: #C9A84C; }
+    .lb-rank.r2 { color: #888; }
+    .lb-rank.r3 { color: #a06030; }
+    .lb-name { flex: 1; font-weight: 500; }
+    .lb-teams { font-size: 11px; color: var(--muted); }
+    .lb-pts { font-weight: 700; color: var(--gp); }
+
+    .warning-box {
+      background: #fff8e1; border: 1px solid #f0d060;
+      border-radius: 10px; padding: 12px 14px;
+      font-size: 13px; color: #7a5c00;
+      margin-bottom: 1.5rem; line-height: 1.55;
+    }
+
+    .tabs { display: flex; gap: 4px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    .tab-btn {
+      padding: 12px 18px; border: none; background: none;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+      color: var(--muted); cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: var(--gp); }
+    .tab-btn.active { color: var(--gp); border-bottom-color: var(--gold); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .spin { display: inline-block; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Admin Panel</h1>
+  <p>Antonio &amp; Tawny's World Cup Pool — points manager</p>
+</div>
+
+<div class="container">
+
+  <div class="warning-box">
+    <i class="ti ti-lock" style="font-size:14px;vertical-align:-2px;margin-right:5px;"></i>
+    <strong>Keep this page private.</strong> Bookmark it for yourself — don't share the link publicly. Anyone with access can update points.
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('update')"><i class="ti ti-plus"></i> Update points</button>
+    <button class="tab-btn" onclick="switchTab('leaderboard')"><i class="ti ti-trophy"></i> Leaderboard</button>
+    <button class="tab-btn" onclick="switchTab('history')"><i class="ti ti-history"></i> History</button>
+  </div>
+
+  <!-- UPDATE POINTS TAB -->
+  <div id="tab-update" class="tab-panel active">
+    <div class="card">
+      <div class="card-title">Step 1 — Select the stage</div>
+      <div class="card-sub">Pick which round just finished. Points will be added for every player whose team won in that round.</div>
+      <div class="stage-select">
+        <button class="stage-btn" onclick="selectStage('group', this)">
+          Group stage win<div class="stage-pts">+3 pts per team</div>
+        </button>
+        <button class="stage-btn" onclick="selectStage('round32', this)">
+          Round of 32<div class="stage-pts">+5 pts per team</div>
+        </button>
+        <button class="stage-btn" onclick="selectStage('round16', this)">
+          Round of 16<div class="stage-pts">+8 pts per team</div>
+        </button>
+        <button class="stage-btn" onclick="selectStage('quarter', this)">
+          Quarter-final<div class="stage-pts">+13 pts per team</div>
+        </button>
+        <button class="stage-btn" onclick="selectStage('semi', this)">
+          Semi-final<div class="stage-pts">+20 pts per team</div>
+        </button>
+        <button class="stage-btn" onclick="selectStage('champion', this)">
+          Champion<div class="stage-pts">+35 pts per team</div>
+        </button>
+      </div>
+
+      <div class="section-label">Step 2 — Select the teams that advanced / won</div>
+      <div class="card-sub" style="margin-top:-8px;">Tap every team that won or advanced in this round.</div>
+      <div class="team-grid" id="teamGrid"></div>
+
+      <div class="section-label">Step 3 — Review &amp; apply</div>
+      <div class="selected-summary" id="summary">No stage or teams selected yet.</div>
+      <button class="apply-btn" id="applyBtn" disabled onclick="applyPoints()">Apply points to leaderboard</button>
+      <div class="result-box" id="resultBox"></div>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD TAB -->
+  <div id="tab-leaderboard" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Current standings</div>
+      <div class="card-sub">Live from your Google Sheet. <button onclick="loadLeaderboard()" style="background:none;border:none;color:var(--gp);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;text-decoration:underline;">Refresh</button></div>
+      <div id="lbContent"><div style="color:var(--muted);font-size:14px;"><i class="ti ti-loader spin"></i> Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div id="tab-history" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Points update history</div>
+      <div class="card-sub">All updates applied this session. Undo reverses the points added — use carefully.</div>
+      <div id="historyContent"><div style="color:var(--muted);font-size:14px;font-style:italic;">No updates applied yet this session.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const API = "https://script.google.com/macros/s/AKfycbyaVpy82Zkaxleykh4f4H-vfFpxb-03Pe4aS3rP2idQDlVOtff9cAP7JA5gbGSM4DJ-/exec";
+
+  const TEAMS = [
+    {name:'Argentina',flag:'🇦🇷'},{name:'Brazil',flag:'🇧🇷'},{name:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'},{name:'France',flag:'🇫🇷'},{name:'Spain',flag:'🇪🇸'},
+    {name:'Germany',flag:'🇩🇪'},{name:'Portugal',flag:'🇵🇹'},{name:'Netherlands',flag:'🇳🇱'},
+    {name:'Belgium',flag:'🇧🇪'},{name:'Colombia',flag:'🇨🇴'},{name:'Norway',flag:'🇳🇴'},
+    {name:'Japan',flag:'🇯🇵'},{name:'Mexico',flag:'🇲🇽'},{name:'Morocco',flag:'🇲🇦'},{name:'Switzerland',flag:'🇨🇭'},{name:'Uruguay',flag:'🇺🇾'},{name:'USA',flag:'🇺🇸'},
+    {name:'Austria',flag:'🇦🇹'},{name:'Canada',flag:'🇨🇦'},{name:'Croatia',flag:'🇭🇷'},{name:'Ecuador',flag:'🇪🇨'},{name:'Paraguay',flag:'🇵🇾'},{name:'Senegal',flag:'🇸🇳'},{name:'Sweden',flag:'🇸🇪'},{name:'Turkey',flag:'🇹🇷'},
+    {name:'Algeria',flag:'🇩🇿'},{name:'Australia',flag:'🇦🇺'},{name:'Bosnia',flag:'🇧🇦'},{name:'Czech Republic',flag:'🇨🇿'},{name:'Egypt',flag:'🇪🇬'},{name:'Ghana',flag:'🇬🇭'},{name:'Iran',flag:'🇮🇷'},{name:'Ivory Coast',flag:'🇨🇮'},{name:'Scotland',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿'},{name:'South Korea',flag:'🇰🇷'},{name:'Tunisia',flag:'🇹🇳'},
+    {name:'Cape Verde',flag:'🇨🇻'},{name:'Curaçao',flag:'🇨🇼'},{name:'DR Congo',flag:'🇨🇩'},{name:'Haiti',flag:'🇭🇹'},{name:'Iraq',flag:'🇮🇶'},{name:'Jordan',flag:'🇯🇴'},{name:'New Zealand',flag:'🇳🇿'},{name:'Panama',flag:'🇵🇦'},{name:'Qatar',flag:'🇶🇦'},{name:'Saudi Arabia',flag:'🇸🇦'},{name:'South Africa',flag:'🇿🇦'},{name:'Uzbekistan',flag:'🇺🇿'}
+  ];
+
+  const STAGE_LABELS = {
+    group:'Group stage win', round32:'Round of 32', round16:'Round of 16',
+    quarter:'Quarter-final', semi:'Semi-final', champion:'Champion'
+  };
+  const STAGE_PTS = { group:3, round32:5, round16:8, quarter:13, semi:20, champion:35 };
+
+  let selectedStage = null;
+  let checkedTeams = new Set();
+  let history = [];
+
+  function switchTab(id) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-'+id).classList.add('active');
+    event.target.classList.add('active');
+    if (id === 'leaderboard') loadLeaderboard();
+  }
+
+  function buildTeamGrid() {
+    document.getElementById('teamGrid').innerHTML = TEAMS.map(t => `
+      <div class="team-check" id="tc-${t.name.replace(/[\s'çü]/g,'_')}" onclick="toggleTeam('${t.name.replace(/'/g,"\\'")}')">
+        <span class="team-flag">${t.flag}</span>
+        <span>${t.name}</span>
+        <i class="ti ti-check check-icon"></i>
+      </div>`).join('');
+  }
+
+  function selectStage(stage, btn) {
+    selectedStage = stage;
+    document.querySelectorAll('.stage-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateSummary();
+  }
+
+  function toggleTeam(name) {
+    if (checkedTeams.has(name)) checkedTeams.delete(name);
+    else checkedTeams.add(name);
+    const id = 'tc-'+name.replace(/[\s'çü]/g,'_');
+    document.getElementById(id).classList.toggle('checked', checkedTeams.has(name));
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const summaryEl = document.getElementById('summary');
+    const applyBtn = document.getElementById('applyBtn');
+    if (!selectedStage && checkedTeams.size === 0) {
+      summaryEl.innerHTML = 'No stage or teams selected yet.';
+      applyBtn.disabled = true; return;
+    }
+    const stageName = selectedStage ? STAGE_LABELS[selectedStage] : '(no stage selected)';
+    const pts = selectedStage ? STAGE_PTS[selectedStage] : 0;
+    const teams = checkedTeams.size > 0
+      ? [...checkedTeams].map(n => { const t = TEAMS.find(x=>x.name===n); return t.flag+' '+n; }).join(', ')
+      : '(no teams selected)';
+    summaryEl.innerHTML = `<strong>Stage:</strong> ${stageName} (+${pts} pts)<br><strong>Teams advancing:</strong> ${teams}`;
+    applyBtn.disabled = !(selectedStage && checkedTeams.size > 0);
+  }
+
+  async function applyPoints() {
+    const btn = document.getElementById('applyBtn');
+    const resultBox = document.getElementById('resultBox');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="ti ti-loader spin"></i> Applying...';
+    resultBox.style.display = 'none';
+
+    const payload = {
+      action: 'updatePoints',
+      stage: selectedStage,
+      teams: [...checkedTeams]
+    };
+
+    try {
+      const res = await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (data.success) {
+        const teamList = [...checkedTeams].map(n => { const t = TEAMS.find(x=>x.name===n); return t.flag+' '+n; }).join(', ');
+        resultBox.className = 'result-box success';
+        resultBox.innerHTML = `<i class="ti ti-check" style="font-size:15px;vertical-align:-2px;margin-right:5px;"></i><strong>${data.updated} player${data.updated!==1?'s':''} updated</strong> — +${data.pointsPerTeam} pts each for: ${teamList}`;
+        resultBox.style.display = 'block';
+
+        history.unshift({
+          stage: STAGE_LABELS[selectedStage],
+          pts: STAGE_PTS[selectedStage],
+          teams: [...checkedTeams],
+          teamList,
+          updated: data.updated,
+          time: new Date().toLocaleTimeString()
+        });
+        renderHistory();
+
+        // Reset selections
+        checkedTeams.clear();
+        document.querySelectorAll('.team-check').forEach(el => el.classList.remove('checked'));
+        selectedStage = null;
+        document.querySelectorAll('.stage-btn').forEach(b => b.classList.remove('active'));
+        updateSummary();
+      } else {
+        throw new Error(data.error || 'Unknown error');
+      }
+    } catch(err) {
+      resultBox.className = 'result-box error';
+      resultBox.innerHTML = '<i class="ti ti-alert-triangle" style="font-size:15px;vertical-align:-2px;margin-right:5px;"></i><strong>Error:</strong> '+err.message;
+      resultBox.style.display = 'block';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Apply points to leaderboard';
+  }
+
+  async function undoUpdate(index) {
+    const entry = history[index];
+    if (!confirm(`Undo: remove +${entry.pts} pts from players who had ${entry.teams.join(', ')}?`)) return;
+    const payload = {
+      action: 'updatePoints',
+      stage: Object.keys(STAGE_PTS).find(k => STAGE_PTS[k] === entry.pts) || 'group',
+      teams: entry.teams,
+      undo: true,
+      negativeMultiplier: -1
+    };
+    try {
+      const res = await fetch(API, { method: 'POST', body: JSON.stringify({
+        action: 'updatePoints',
+        stage: Object.keys(STAGE_LABELS).find(k => STAGE_LABELS[k] === entry.stage),
+        teams: entry.teams,
+        undo: true
+      })});
+      const data = await res.json();
+      if (data.success) {
+        history.splice(index, 1);
+        renderHistory();
+        alert(`Undone — ${data.updated} player(s) had points reversed.`);
+      }
+    } catch(err) { alert('Error: '+err.message); }
+  }
+
+  function renderHistory() {
+    const el = document.getElementById('historyContent');
+    if (!history.length) {
+      el.innerHTML = '<div style="color:var(--muted);font-size:14px;font-style:italic;">No updates applied yet this session.</div>';
+      return;
+    }
+    el.innerHTML = history.map((h,i) => `
+      <div class="history-row">
+        <div>
+          <div class="history-stage">${h.stage} · +${h.pts} pts · ${h.updated} player${h.updated!==1?'s':''} updated</div>
+          <div class="history-teams">${h.teamList} · ${h.time}</div>
+        </div>
+        <button class="undo-btn" onclick="undoUpdate(${i})"><i class="ti ti-arrow-back-up"></i> Undo</button>
+      </div>`).join('');
+  }
+
+  async function loadLeaderboard() {
+    const el = document.getElementById('lbContent');
+    el.innerHTML = '<div style="color:var(--muted);font-size:14px;"><i class="ti ti-loader spin"></i> Loading...</div>';
+    try {
+      const res = await fetch(API+'?action=leaderboard');
+      const data = await res.json();
+      const entries = (data.entries || []).sort((a,b) => b.points-a.points);
+      if (!entries.length) { el.innerHTML = '<div style="color:var(--muted);font-size:14px;font-style:italic;">No entries yet.</div>'; return; }
+      const medals = ['🥇','🥈','🥉'];
+      const rl = ['r1','r2','r3'];
+      el.innerHTML = '<div class="leaderboard-mini">'+entries.map((p,i) => `
+        <div class="lb-row">
+          <div class="lb-rank ${rl[i]||''}">${i<3?medals[i]:i+1}</div>
+          <div style="flex:1;">
+            <div class="lb-name">${p.firstName} ${p.lastName.charAt(0)}. ${p.teamName?'<span style="font-size:11px;color:var(--muted);font-weight:400;">· '+p.teamName+'</span>':''}</div>
+            <div class="lb-teams">${(p.teams||[]).join(' · ')}</div>
+          </div>
+          <div class="lb-pts">${p.points} pts</div>
+        </div>`).join('')+'</div>';
+    } catch(err) {
+      el.innerHTML = '<div style="color:#a32d2d;font-size:14px;">Could not load — check your connection.</div>';
+    }
+  }
+
+  buildTeamGrid();
+</script>
+</body>
+</html>
