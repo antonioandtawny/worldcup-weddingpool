@@ -163,7 +163,7 @@
     .rule-title { font-weight: 500; margin-bottom: 5px; font-size: 15px; }
     .rule-text { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
 
-    .points-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 1rem; }
+    .points-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 1rem; }
     .points-item {
       background: var(--white);
       border: 1px solid var(--border);
@@ -479,11 +479,12 @@
   <div class="rule-card"><div class="rule-num">1</div><div><div class="rule-title">Build your team budget</div><div class="rule-text">Each team has a cost based on strength. Pick 5 teams — your entry fee is the total of their costs, capped at $20. You can't load up on all the favourites!</div></div></div>
   <div class="rule-card"><div class="rule-num">2</div><div><div class="rule-title">Pick exactly 5 teams</div><div class="rule-text">Choose 5 national teams across any tiers, as long as the total doesn't exceed $20. You earn points every time your teams win or advance.</div></div></div>
   <div class="rule-card"><div class="rule-num">3</div><div><div class="rule-title">Multiple entries welcome</div><div class="rule-text">Want to enter more than once? Go for it — each entry is a separate fee. A unique team name is required for each entry so we can tell them apart on the leaderboard.</div></div></div>
-  <div class="rule-card"><div class="rule-num">4</div><div><div class="rule-title">Earn points as the tournament progresses</div><div class="rule-text">Points are awarded for every stage your teams survive. The further they go, the more points — with big bonuses for semi-finals, finals, and the champion.</div></div></div>
+  <div class="rule-card"><div class="rule-num">4</div><div><div class="rule-title">Earn points as the tournament progresses</div><div class="rule-text">Points are awarded for every group stage match your teams win (+3) or draw (+1), and for every knockout round they advance through. The further they go, the more points — with big bonuses for semi-finals, finals, and the champion.</div></div></div>
   <div style="background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1rem;">
     <div class="rule-title" style="margin-bottom:0.4rem;">Points per stage (per team)</div>
     <div class="points-grid">
-      <div class="points-item"><div class="points-num">3</div><div class="points-label">Group stage win</div></div>
+      <div class="points-item"><div class="points-num">1</div><div class="points-label">Group stage draw (per match)</div></div>
+      <div class="points-item"><div class="points-num">3</div><div class="points-label">Group stage win (per match)</div></div>
       <div class="points-item"><div class="points-num">5</div><div class="points-label">Round of 32</div></div>
       <div class="points-item"><div class="points-num">8</div><div class="points-label">Round of 16</div></div>
       <div class="points-item"><div class="points-num">13</div><div class="points-label">Quarter-final</div></div>
