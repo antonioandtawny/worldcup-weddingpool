@@ -580,7 +580,7 @@
   let selected = new Map();
 
   const FLAG_MAP = {};
-  TIERS.forEach(tier => tier.teams.forEach(t => { FLAG_MAP[t.name] = t.flag; }));
+  TIERS.forEach(tier => tier.teams.forEach(t => { FLAG_MAP[t.name] = t.cc; }));
 
   function showSection(id) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -604,7 +604,7 @@
           ${tier.teams.map(t => `
             <button class="team-btn" id="btn-${t.name.replace(/[\s'çü]/g,'_')}"
               onclick="toggleTeam('${t.name.replace(/'/g,"\\'")}',${tier.cost},'${t.flag}')">
-              <span class="team-flag">${t.flag}</span>
+              <img src="https://flagcdn.com/w40/${t.cc}.png" width="36" height="24" alt="${t.name}" style="border-radius:3px;object-fit:cover;">
               <span>${t.name}</span>
               <span class="team-cost">$${tier.cost%1===0?tier.cost:tier.cost.toFixed(2)}</span>
             </button>`).join('')}
@@ -617,7 +617,7 @@
     else {
       if (selected.size >= 5) return;
       if (getTotal() + cost > CAP) return;
-      selected.set(name, {cost, flag});
+      selected.set(name, {cost, cc: flag});
     }
     updateSummary(); refreshButtons(); validateForm();
   }
@@ -638,7 +638,7 @@
     const chips = document.getElementById('selChips');
     if (!selected.size) { chips.innerHTML='<span style="font-size:12px;color:#666;font-style:italic;">No teams selected yet</span>'; return; }
     chips.innerHTML = [...selected.entries()].map(([n,v]) =>
-      `<span class="chip">${v.flag} ${n} <span style="opacity:.7">$${v.cost%1===0?v.cost:v.cost.toFixed(2)}</span></span>`).join('');
+      `<span class="chip"><img src="https://flagcdn.com/w20/${v.cc}.png" width="18" height="12" alt="${n}" style="border-radius:2px;vertical-align:-1px;margin-right:3px;">${n} <span style="opacity:.7">$${v.cost%1===0?v.cost:v.cost.toFixed(2)}</span></span>`).join('');
   }
 
   function refreshButtons() {
@@ -668,7 +668,7 @@
     const tn = document.getElementById('teamName').value.trim();
     const total = getTotal();
     document.getElementById('modalTeams').innerHTML = [...selected.entries()].map(([n,v]) =>
-      `<span class="modal-chip">${v.flag} ${n}</span>`).join('');
+      `<span class="modal-chip"><img src="https://flagcdn.com/w20/${v.cc}.png" width="18" height="12" alt="${n}" style="border-radius:2px;vertical-align:-1px;margin-right:4px;">${n}</span>`).join('');
     document.getElementById('modalCost').innerHTML =
       `Playing as: <strong>${fn} ${ln}${tn?' · '+tn:''}</strong><br>`+
       `Entry fee: <strong>$${total.toFixed(2)}</strong> — 70% funds the wedding 💍<br>`+
