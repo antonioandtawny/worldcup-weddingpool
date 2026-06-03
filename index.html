@@ -88,6 +88,14 @@
     .split-pill .wedding { background: var(--gold); color: #1a1a1a; font-weight: 500; }
     .split-pill .prize { background: rgba(255,255,255,0.1); color: #fff; }
 
+    /* STATS BAR STICKY */
+    #statsBar {
+      position: sticky;
+      top: 0;
+      z-index: 101;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    }
+
     /* NAV */
     nav {
       display: flex;
@@ -97,7 +105,7 @@
       padding: 0 1rem;
       flex-wrap: wrap;
       position: sticky;
-      top: 0;
+      top: 78px;
       z-index: 100;
     }
     .nav-btn {
@@ -429,12 +437,39 @@
   </div>
 </div>
 
+<!-- STATS BAR -->
+<div id="statsBar" style="background:#fff;border-bottom:1px solid rgba(0,0,0,0.1);padding:14px 1.5rem;">
+  <div style="max-width:780px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;align-items:center;">
+    <div style="text-align:center;">
+      <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Deadline</div>
+      <div id="countdown" style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#1a5e2a;line-height:1.2;">—</div>
+      <div style="font-size:10px;color:#888;margin-top:2px;">Jun 11 · 1:00pm CST</div>
+    </div>
+    <div style="text-align:center;border-left:1px solid rgba(0,0,0,0.08);border-right:1px solid rgba(0,0,0,0.08);padding:0 8px;">
+      <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Entries</div>
+      <div id="statEntries" style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#1a5e2a;">—</div>
+      <div style="font-size:10px;color:#888;margin-top:2px;" id="statPaid">— confirmed paid</div>
+    </div>
+    <div style="text-align:center;border-right:1px solid rgba(0,0,0,0.08);padding:0 8px;">
+      <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Total pot</div>
+      <div id="statTotal" style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#1a5e2a;">—</div>
+      <div style="font-size:10px;color:#888;margin-top:2px;">70% to wedding fund</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Prize pool</div>
+      <div id="statPrize" style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#C9A84C;">—</div>
+      <div style="font-size:10px;color:#888;margin-top:2px;line-height:1.4;">60% / 30% / 10% split</div>
+    </div>
+  </div>
+</div>
+
+
+
 <nav>
   <button class="nav-btn active" onclick="showSection('rules')"><i class="ti ti-file-text"></i> Rules</button>
   <button class="nav-btn" onclick="showSection('pick')"><i class="ti ti-shirt"></i> Pick Teams</button>
   <button class="nav-btn" onclick="showSection('leaderboard')"><i class="ti ti-trophy"></i> Leaderboard</button>
 </nav>
-
 <!-- RULES -->
 <div id="rules" class="section active">
   <h2 class="section-title">How it works</h2>
@@ -460,7 +495,7 @@
       <div class="points-item"><div class="points-num">35</div><div class="points-label">Champion</div></div>
     </div>
   </div>
-  <div class="rule-card"><div class="rule-num">5</div><div><div class="rule-title">Prize split</div><div class="rule-text">Top 3 entries split the prize pool: 1st gets 50%, 2nd gets 30%, 3rd gets 20%. Only confirmed paid entries are eligible.</div></div></div>
+  <div class="rule-card"><div class="rule-num">5</div><div><div class="rule-title">Prize split</div><div class="rule-text">Top 3 entries split the prize pool: 1st gets 60%, 2nd gets 30%, 3rd gets 10%. Only confirmed paid entries are eligible.</div></div></div>
   <div class="rule-card"><div class="rule-num">6</div><div><div class="rule-title">Ties &amp; deadline</div><div class="rule-text">In a tie, the earlier submission wins. All picks and payments must be in before tournament kick-off — no changes after the deadline.</div></div></div>
   <button class="submit-btn" onclick="showSection('pick')">Make my picks →</button>
 </div>
@@ -532,9 +567,9 @@
     <div class="pot-amount" id="potAmt">—</div>
     <div class="pot-sub" id="potSub">Loading...</div>
     <div class="prize-split">
-      <div class="prize-item"><div class="prize-medal">🥇</div><div class="prize-amt" id="p1">—</div><div class="prize-lbl">1st place (50%)</div></div>
+      <div class="prize-item"><div class="prize-medal">🥇</div><div class="prize-amt" id="p1">—</div><div class="prize-lbl">1st place (60%)</div></div>
       <div class="prize-item"><div class="prize-medal">🥈</div><div class="prize-amt" id="p2">—</div><div class="prize-lbl">2nd place (30%)</div></div>
-      <div class="prize-item"><div class="prize-medal">🥉</div><div class="prize-amt" id="p3">—</div><div class="prize-lbl">3rd place (20%)</div></div>
+      <div class="prize-item"><div class="prize-medal">🥉</div><div class="prize-amt" id="p3">—</div><div class="prize-lbl">3rd place (10%)</div></div>
     </div>
   </div>
   <div class="lb-legend">
@@ -725,9 +760,9 @@
       document.getElementById('potAmt').textContent = '$'+prize.toFixed(2);
       document.getElementById('potSub').textContent =
         entries.length+' entries ('+paidEntries.length+' paid) · $'+paidTotal.toFixed(2)+' confirmed · $'+(paidTotal*0.70).toFixed(2)+' to wedding fund';
-      document.getElementById('p1').textContent = '$'+(prize*0.5).toFixed(2);
+      document.getElementById('p1').textContent = '$'+(prize*0.6).toFixed(2);
       document.getElementById('p2').textContent = '$'+(prize*0.3).toFixed(2);
-      document.getElementById('p3').textContent = '$'+(prize*0.2).toFixed(2);
+      document.getElementById('p3').textContent = '$'+(prize*0.1).toFixed(2);
       const sorted = entries.sort((a,b) => b.points-a.points);
       if (!sorted.length) {
         rowsEl.innerHTML = '<div style="padding:1.5rem;text-align:center;color:#666;font-size:14px;">No entries yet — be the first!</div>';
@@ -754,6 +789,53 @@
       rowsEl.innerHTML = '';
     }
   }
+
+
+  // STATS BAR
+  const DEADLINE = new Date('2026-06-11T13:00:00-06:00'); // 1:00pm CST (UTC-6)
+
+  function updateCountdown() {
+    const now = new Date();
+    const diff = DEADLINE - now;
+    const el = document.getElementById('countdown');
+    if (diff <= 0) {
+      el.textContent = 'Closed';
+      el.style.color = '#c0392b';
+      return;
+    }
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hrs  = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+    const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+    const secs = Math.floor((diff % (1000*60)) / 1000);
+    if (days > 0) {
+      el.innerHTML = days+'d '+hrs+'h '+mins+'m<br><span style="font-size:.85rem;">'+secs+'s</span>';
+    } else {
+      el.innerHTML = hrs+'h '+mins+'m '+secs+'s';
+    }
+  }
+
+  async function loadStats() {
+    try {
+      const res = await fetch(API+'?action=leaderboard');
+      const data = await res.json();
+      const entries = data.entries || [];
+      const paidEntries = entries.filter(e => e.paid);
+      const paidTotal = paidEntries.reduce((s,e) => s+(parseFloat(e.entryFee)||0), 0);
+      const allTotal = entries.reduce((s,e) => s+(parseFloat(e.entryFee)||0), 0);
+      const prize = paidTotal * 0.30;
+      document.getElementById('statEntries').textContent = entries.length;
+      document.getElementById('statPaid').textContent = paidEntries.length+' confirmed paid';
+      document.getElementById('statTotal').textContent = '$'+allTotal.toFixed(2);
+      document.getElementById('statPrize').textContent = '$'+prize.toFixed(2);
+    } catch(e) {
+      // silently fail - stats bar is bonus info
+    }
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+  loadStats();
+  setInterval(loadStats, 60000); // refresh stats every minute
 
   buildTiers();
 </script>
