@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Cup 2026 Pool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #F0D080;
+      --gp: #1a5e2a;
+      --gl: #2e8b47;
+      --bg: #faf7f0;
+      --white: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #666;
+      --border: rgba(0,0,0,0.12);
+      --border-mid: rgba(0,0,0,0.22);
+      --surface: #f4f1ea;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* HERO */
+    .hero {
+      background: var(--gp);
+      padding: 3.5rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 40px, transparent 40px, transparent 80px);
+    }
+    .hero-badge {
+      display: inline-block;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 4px 16px;
+      border-radius: 20px;
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 3.6rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 0.6rem;
+      position: relative;
+    }
+    .hero h1 span { color: var(--gold-light); }
+    .hero-sub {
+      color: rgba(255,255,255,0.65);
+      font-size: 16px;
+      margin-bottom: 2rem;
+      font-style: italic;
+      position: relative;
+    }
+    .split-pill {
+      display: inline-flex;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 40px;
+      overflow: hidden;
+      font-size: 14px;
+      position: relative;
+    }
+    .split-pill div { padding: 9px 22px; display: flex; align-items: center; gap: 7px; }
+    .split-pill .wedding { background: var(--gold); color: #1a1a1a; font-weight: 500; }
+    .split-pill .prize { background: rgba(255,255,255,0.1); color: #fff; }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: center;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1rem;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-btn {
+      padding: 16px 22px;
+      border: none; background: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .nav-btn:hover { color: var(--gp); }
+    .nav-btn.active { color: var(--gp); border-bottom-color: var(--gold); }
+
+    /* SECTIONS */
+    .section { display: none; padding: 2.5rem 1.5rem; max-width: 780px; margin: 0 auto; }
+    .section.active { display: block; }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem; font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--gp);
+    }
+
+    /* RULES */
+    .money-box {
+      background: var(--gp);
+      border-radius: 14px;
+      padding: 1.6rem;
+      color: #fff;
+      margin-bottom: 1.5rem;
+    }
+    .money-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      margin-bottom: 1rem;
+      color: var(--gold-light);
+    }
+    .money-split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .money-item { background: rgba(255,255,255,0.1); border-radius: 10px; padding: 1.1rem; text-align: center; }
+    .money-pct { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: var(--gold-light); }
+    .money-label { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 5px; }
+
+    .rule-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1rem;
+      display: flex; gap: 1rem; align-items: flex-start;
+    }
+    .rule-num {
+      min-width: 34px; height: 34px;
+      background: var(--gp); color: #fff;
+      font-weight: 500; font-size: 14px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .rule-title { font-weight: 500; margin-bottom: 5px; font-size: 15px; }
+    .rule-text { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+    .points-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 1rem; }
+    .points-item {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.9rem; text-align: center;
+    }
+    .points-num { font-size: 1.5rem; font-weight: 700; color: var(--gp); }
+    .points-label { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+    /* PICK TEAMS - FORM */
+    .reg-section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+    .reg-title { font-weight: 500; font-size: 15px; margin-bottom: 0.4rem; color: var(--gp); display: flex; align-items: center; gap: 8px; }
+    .multi-note {
+      background: #fffbea;
+      border: 1px solid #f0d060;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px; color: #7a5c00;
+      margin-bottom: 1rem; line-height: 1.55;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+    .admin-tag {
+      font-size: 10px; background: #fff3cd; color: #856404;
+      border-radius: 4px; padding: 1px 6px; margin-left: 6px; font-weight: 400;
+    }
+    input[type=text], input[type=email] {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1px solid var(--border-mid);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      background: var(--white);
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    input[type=text]:focus, input[type=email]:focus {
+      outline: none; border-color: var(--gp);
+    }
+
+    /* BUDGET BAR */
+    .budget-bar-wrap {
+      background: var(--white);
+      border: 1px solid var(--border-mid);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 1.2rem;
+    }
+    .budget-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .summary-counter { font-size: 14px; color: var(--text-muted); margin-bottom: 6px; }
+    .summary-counter span { font-weight: 500; color: var(--gp); }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip { background: #e6f7eb; border: 1px solid #a8d8b0; border-radius: 20px; padding: 3px 10px; font-size: 12px; color: var(--gp); }
+    .cost-box { text-align: right; min-width: 105px; }
+    .cost-label { font-size: 11px; color: var(--text-muted); }
+    .cost-amt { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 700; color: var(--gp); }
+    .cost-amt.over { color: #c0392b; }
+    .cost-sub { font-size: 11px; color: var(--text-muted); }
+    .bar-track { height: 9px; background: var(--surface); border-radius: 5px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--gp); border-radius: 5px; transition: width 0.3s, background 0.2s; }
+    .bar-fill.over { background: #c0392b; }
+    .bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+    .over-msg { font-size: 12px; color: #a32d2d; margin-top: 7px; display: none; }
+    .over-msg.show { display: block; }
+
+    /* TIERS */
+    .tier-section { margin-bottom: 8px; }
+    .tier-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 15px; border-radius: 10px 10px 0 0; }
+    .tier-header.t8  { background: #1a5e2a; color: #fff; }
+    .tier-header.t6  { background: #2e8b47; color: #fff; }
+    .tier-header.t5  { background: #3a9e58; color: #fff; }
+    .tier-header.t4  { background: #52b86f; color: #fff; }
+    .tier-header.t3  { background: #78c98a; color: #1a1a1a; }
+    .tier-header.t2  { background: #a8ddb5; color: #1a5e2a; }
+    .tier-header.t1  { background: #c8eccc; color: #1a5e2a; }
+    .tier-header.t05 { background: #e6f7e8; color: #1a5e2a; border: 1px solid #b8e0bb; }
+    .tier-label { font-weight: 500; font-size: 14px; }
+    .tier-count { font-size: 12px; opacity: 0.75; }
+    .tier-body {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .team-btn {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 8px;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 500;
+      transition: all 0.15s;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      color: var(--text);
+    }
+    .team-btn:hover:not(:disabled) { border-color: var(--gl); background: #f0faf3; }
+    .team-btn.selected { border-color: var(--gp); background: #e6f7eb; color: var(--gp); }
+    .team-btn.would-exceed { opacity: 0.35; cursor: not-allowed; }
+    .team-btn:disabled:not(.would-exceed) { opacity: 0.35; cursor: default; }
+    .team-flag { font-size: 1.5rem; }
+    .team-cost { font-size: 10px; color: var(--text-muted); }
+    .team-btn.selected .team-cost { color: var(--gp); }
+
+    /* SUBMIT */
+    .submit-btn {
+      width: 100%; padding: 15px;
+      background: var(--gp); color: #fff;
+      border: none; border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px; font-weight: 500;
+      cursor: pointer; transition: background 0.2s;
+      margin-top: 0.75rem;
+    }
+    .submit-btn:hover { background: var(--gl); }
+    .submit-btn:disabled { background: #aaa; cursor: default; }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 2rem;
+      max-width: 400px; width: 100%;
+      text-align: center;
+    }
+    .modal-icon { font-size: 2.8rem; margin-bottom: 0.8rem; }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--gp); }
+    .modal-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.6; }
+    .modal-teams { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 1rem; }
+    .modal-chip { background: #e6f7eb; border: 1px solid #a8d8b0; border-radius: 20px; padding: 5px 13px; font-size: 13px; color: var(--gp); }
+    .modal-cost { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; padding: 12px; background: var(--surface); border-radius: 9px; line-height: 1.75; }
+    .modal-cost strong { color: var(--text); }
+    .modal-btns { display: flex; gap: 10px; }
+    .modal-cancel { flex: 1; padding: 13px; border: 1px solid var(--border-mid); border-radius: 9px; background: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-muted); }
+    .modal-cancel:hover { background: var(--surface); }
+    .modal-confirm { flex: 1; padding: 13px; border: none; background: var(--gp); color: #fff; border-radius: 9px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; }
+    .modal-confirm:hover { background: var(--gl); }
+    .modal-confirm:disabled { background: #aaa; cursor: default; }
+    #submitStatus { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; min-height: 18px; }
+
+    .success-msg {
+      display: none;
+      background: var(--gp); color: #fff;
+      border-radius: 12px; padding: 1.6rem;
+      text-align: center; margin-top: 1rem;
+    }
+    .success-msg.show { display: block; }
+    .success-msg h3 { font-family: 'Playfair Display', serif; color: var(--gold-light); margin-bottom: 0.4rem; font-size: 1.3rem; }
+    .success-msg p { font-size: 14px; color: rgba(255,255,255,0.85); }
+
+    /* LEADERBOARD */
+    .pot-bar {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 1.3rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .pot-label { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+    .pot-amount { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: var(--gp); }
+    .pot-sub { font-size: 13px; color: var(--text-muted); margin-top: 3px; line-height: 1.5; }
+    .prize-split { display: flex; gap: 8px; margin-top: 1rem; }
+    .prize-item { flex: 1; background: var(--surface); border-radius: 9px; padding: 11px; text-align: center; }
+    .prize-medal { font-size: 1.3rem; margin-bottom: 5px; }
+    .prize-amt { font-weight: 500; color: var(--gp); font-size: 15px; }
+    .prize-lbl { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+    .lb-legend { display: flex; gap: 14px; margin-bottom: 12px; font-size: 12px; color: var(--text-muted); align-items: center; flex-wrap: wrap; }
+    .paid-badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; }
+    .paid-badge.yes { background: #e6f7eb; color: #1a5e2a; border: 1px solid #a8d8b0; }
+    .paid-badge.no  { background: #fff8e1; color: #856404; border: 1px solid #f0d060; }
+
+    .lb-header {
+      display: grid;
+      grid-template-columns: 38px 1fr 85px 55px;
+      gap: 8px;
+      padding: 8px 15px;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+    .lb-row {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      display: grid;
+      grid-template-columns: 38px 1fr 85px 55px;
+      gap: 8px;
+      padding: 13px 15px;
+      margin-bottom: 8px;
+      align-items: center;
+      transition: border-color 0.15s;
+    }
+    .lb-row.top1 { border-color: #C9A84C; background: #fffdf5; }
+    .lb-row.top2 { border-color: #b0b0b0; }
+    .lb-row.top3 { border-color: #b08050; background: #fdf8f2; }
+    .lb-row.unpaid { opacity: 0.72; }
+    .rank { font-weight: 700; font-size: 16px; text-align: center; color: var(--text-muted); }
+    .rank.r1 { color: #C9A84C; }
+    .rank.r2 { color: #888; }
+    .rank.r3 { color: #a06030; }
+    .player-name { font-weight: 500; font-size: 14px; }
+    .player-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .pts { font-weight: 700; font-size: 17px; color: var(--gp); text-align: right; }
+    .pts-label { font-size: 10px; color: var(--text-muted); text-align: right; }
+
+    .status-bar { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 10px 14px; border-radius: 9px; margin-bottom: 1rem; flex-wrap: wrap; }
+    .status-bar.loading { background: var(--surface); color: var(--text-muted); }
+    .status-bar.error   { background: #fff3cd; color: #856404; }
+    .status-bar.ok      { background: #e6f7eb; color: #1a5e2a; }
+    .spin { display: inline-block; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .refresh-btn {
+      display: block; margin: 0.5rem auto 1rem;
+      background: none; border: 1px solid var(--border-mid);
+      border-radius: 7px; padding: 6px 14px;
+      font-size: 13px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text-muted);
+    }
+    .refresh-btn:hover { background: var(--surface); }
+
+    @media (max-width: 500px) {
+      .lb-header, .lb-row { grid-template-columns: 32px 1fr 70px 44px; }
+      .prize-split { flex-wrap: wrap; }
+      .prize-item { min-width: calc(33% - 6px); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">World Cup 2026 Pool</div>
+  <h1>Pick Your Teams,<br><span>Fund the Love</span></h1>
+  <p class="hero-sub">A soccer pool. A wedding. Two goals, one beautiful game.</p>
+  <div class="split-pill">
+    <div class="wedding"><i class="ti ti-heart"></i> 70% Wedding Fund</div>
+    <div class="prize"><i class="ti ti-trophy"></i> 30% Prize Pool</div>
+  </div>
+</div>
+
+<nav>
+  <button class="nav-btn active" onclick="showSection('rules')"><i class="ti ti-file-text"></i> Rules</button>
+  <button class="nav-btn" onclick="showSection('pick')"><i class="ti ti-shirt"></i> Pick Teams</button>
+  <button class="nav-btn" onclick="showSection('leaderboard')"><i class="ti ti-trophy"></i> Leaderboard</button>
+</nav>
+
+<!-- RULES -->
+<div id="rules" class="section active">
+  <h2 class="section-title">How it works</h2>
+  <div class="money-box">
+    <h3>Where your entry fee goes</h3>
+    <div class="money-split">
+      <div class="money-item"><div class="money-pct">70%</div><div class="money-label">Straight to the wedding fund</div></div>
+      <div class="money-item"><div class="money-pct">30%</div><div class="money-label">Split among the top 3 winners</div></div>
+    </div>
+  </div>
+  <div class="rule-card"><div class="rule-num">1</div><div><div class="rule-title">Build your team budget</div><div class="rule-text">Each team has a cost based on strength. Pick 5 teams — your entry fee is the total of their costs, capped at $20. You can't load up on all the favourites!</div></div></div>
+  <div class="rule-card"><div class="rule-num">2</div><div><div class="rule-title">Pick exactly 5 teams</div><div class="rule-text">Choose 5 national teams across any tiers, as long as the total doesn't exceed $20. You earn points every time your teams win or advance.</div></div></div>
+  <div class="rule-card"><div class="rule-num">3</div><div><div class="rule-title">Multiple entries welcome</div><div class="rule-text">Want to enter more than once? Go for it — each entry is a separate fee. A unique team name is required for each entry so we can tell them apart on the leaderboard.</div></div></div>
+  <div class="rule-card"><div class="rule-num">4</div><div><div class="rule-title">Earn points as the tournament progresses</div><div class="rule-text">Points are awarded for every stage your teams survive. The further they go, the more points — with big bonuses for semi-finals, finals, and the champion.</div></div></div>
+  <div style="background:#fff;border:1px solid rgba(0,0,0,0.12);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1rem;">
+    <div class="rule-title" style="margin-bottom:0.4rem;">Points per stage (per team)</div>
+    <div class="points-grid">
+      <div class="points-item"><div class="points-num">3</div><div class="points-label">Group stage win</div></div>
+      <div class="points-item"><div class="points-num">5</div><div class="points-label">Round of 32</div></div>
+      <div class="points-item"><div class="points-num">8</div><div class="points-label">Round of 16</div></div>
+      <div class="points-item"><div class="points-num">13</div><div class="points-label">Quarter-final</div></div>
+      <div class="points-item"><div class="points-num">20</div><div class="points-label">Semi-final</div></div>
+      <div class="points-item"><div class="points-num">35</div><div class="points-label">Champion</div></div>
+    </div>
+  </div>
+  <div class="rule-card"><div class="rule-num">5</div><div><div class="rule-title">Prize split</div><div class="rule-text">Top 3 entries split the prize pool: 1st gets 50%, 2nd gets 30%, 3rd gets 20%. Only confirmed paid entries are eligible.</div></div></div>
+  <div class="rule-card"><div class="rule-num">6</div><div><div class="rule-title">Ties &amp; deadline</div><div class="rule-text">In a tie, the earlier submission wins. All picks and payments must be in before tournament kick-off — no changes after the deadline.</div></div></div>
+  <button class="submit-btn" onclick="showSection('pick')">Make my picks →</button>
+</div>
+
+<!-- PICK TEAMS -->
+<div id="pick" class="section">
+  <h2 class="section-title">Pick your 5 teams</h2>
+
+  <div class="reg-section">
+    <div class="reg-title"><i class="ti ti-user" style="font-size:16px;color:#1a5e2a;"></i> Your details</div>
+    <div class="multi-note">
+      <i class="ti ti-info-circle" style="font-size:15px;vertical-align:-2px;margin-right:4px;"></i>
+      <strong>Want to enter multiple times?</strong> You're welcome to submit more than one entry — each is a separate fee. If entering more than once, a unique team name is required for each submission so we can identify your entries on the leaderboard.
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">First name</label>
+        <input type="text" id="firstName" placeholder="e.g. Jamie" oninput="validateForm()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last name</label>
+        <input type="text" id="lastName" placeholder="e.g. Rodriguez" oninput="validateForm()">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Email <span class="admin-tag">admin only — never shown publicly</span></label>
+        <input type="email" id="emailInput" placeholder="e.g. jamie@email.com" oninput="validateForm()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Team name <span style="font-size:11px;color:#666;font-weight:400;">(optional for single entry)</span></label>
+        <input type="text" id="teamName" placeholder="e.g. Viva Las Vegas FC" oninput="validateForm()">
+      </div>
+    </div>
+  </div>
+
+  <div class="budget-bar-wrap">
+    <div class="budget-top">
+      <div style="flex:1;">
+        <div class="summary-counter">Teams selected: <span id="selCount">0</span> / 5</div>
+        <div class="chips" id="selChips"><span style="font-size:12px;color:#666;font-style:italic;">No teams selected yet</span></div>
+      </div>
+      <div class="cost-box">
+        <div class="cost-label">Entry fee</div>
+        <div class="cost-amt" id="totalCost">$0.00</div>
+        <div class="cost-sub" id="budgetRemain">$20.00 remaining</div>
+      </div>
+    </div>
+    <div class="bar-track"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+    <div class="bar-labels"><span>$0</span><span>$20 cap</span></div>
+    <div class="over-msg" id="overMsg"><i class="ti ti-alert-triangle" style="font-size:13px;vertical-align:-1px;margin-right:4px;"></i>Over the $20 cap — remove a team to stay within budget.</div>
+  </div>
+
+  <div id="tierContainer"></div>
+
+  <button class="submit-btn" id="submitBtn" disabled onclick="openModal()">Review &amp; submit my picks</button>
+  <div class="success-msg" id="successMsg">
+    <h3>You're in!</h3>
+    <p>Your picks have been saved. Payment details will follow. Here's to the beautiful game — and a beautiful wedding!</p>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div id="leaderboard" class="section">
+  <h2 class="section-title">Leaderboard</h2>
+  <div id="lbStatus" class="status-bar loading"><i class="ti ti-loader spin"></i> Loading live data...</div>
+  <div class="pot-bar">
+    <div class="pot-label">Current prize pot (30% of confirmed paid entries)</div>
+    <div class="pot-amount" id="potAmt">—</div>
+    <div class="pot-sub" id="potSub">Loading...</div>
+    <div class="prize-split">
+      <div class="prize-item"><div class="prize-medal">🥇</div><div class="prize-amt" id="p1">—</div><div class="prize-lbl">1st place (50%)</div></div>
+      <div class="prize-item"><div class="prize-medal">🥈</div><div class="prize-amt" id="p2">—</div><div class="prize-lbl">2nd place (30%)</div></div>
+      <div class="prize-item"><div class="prize-medal">🥉</div><div class="prize-amt" id="p3">—</div><div class="prize-lbl">3rd place (20%)</div></div>
+    </div>
+  </div>
+  <div class="lb-legend">
+    <span><span class="paid-badge yes">Paid</span> Payment confirmed</span>
+    <span><span class="paid-badge no">Pending</span> Awaiting payment</span>
+  </div>
+  <div class="lb-header"><div>#</div><div>Player</div><div style="text-align:center">Status</div><div style="text-align:right">Pts</div></div>
+  <div id="lbRows"><div style="padding:1rem;text-align:center;color:#666;font-size:14px;">Loading entries...</div></div>
+  <button class="refresh-btn" onclick="loadLeaderboard()"><i class="ti ti-refresh"></i> Refresh</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-icon">⚽</div>
+    <div class="modal-title">Confirm your picks</div>
+    <div class="modal-sub">Once submitted, no changes can be made!</div>
+    <div class="modal-teams" id="modalTeams"></div>
+    <div class="modal-cost" id="modalCost"></div>
+    <div id="submitStatus"></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" id="cancelBtn" onclick="closeModal()">Go back</button>
+      <button class="modal-confirm" id="confirmBtn" onclick="confirmPicks()">Confirm &amp; submit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = "https://script.google.com/macros/s/AKfycbyaVpy82Zkaxleykh4f4H-vfFpxb-03Pe4aS3rP2idQDlVOtff9cAP7JA5gbGSM4DJ-/exec";
+  const CAP = 20;
+
+  const TIERS = [
+    {cost:8, label:'$8 tier', cls:'t8', teams:[{name:'Argentina',flag:'🇦🇷'},{name:'Brazil',flag:'🇧🇷'},{name:'England',flag:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'},{name:'France',flag:'🇫🇷'},{name:'Spain',flag:'🇪🇸'}]},
+    {cost:6, label:'$6 tier', cls:'t6', teams:[{name:'Germany',flag:'🇩🇪'},{name:'Portugal',flag:'🇵🇹'}]},
+    {cost:5, label:'$5 tier', cls:'t5', teams:[{name:'Netherlands',flag:'🇳🇱'}]},
+    {cost:4, label:'$4 tier', cls:'t4', teams:[{name:'Belgium',flag:'🇧🇪'},{name:'Colombia',flag:'🇨🇴'},{name:'Norway',flag:'🇳🇴'}]},
+    {cost:3, label:'$3 tier', cls:'t3', teams:[{name:'Japan',flag:'🇯🇵'},{name:'Mexico',flag:'🇲🇽'},{name:'Morocco',flag:'🇲🇦'},{name:'Switzerland',flag:'🇨🇭'},{name:'Uruguay',flag:'🇺🇾'},{name:'USA',flag:'🇺🇸'}]},
+    {cost:2, label:'$2 tier', cls:'t2', teams:[{name:'Austria',flag:'🇦🇹'},{name:'Canada',flag:'🇨🇦'},{name:'Croatia',flag:'🇭🇷'},{name:'Ecuador',flag:'🇪🇨'},{name:'Paraguay',flag:'🇵🇾'},{name:'Senegal',flag:'🇸🇳'},{name:'Sweden',flag:'🇸🇪'},{name:'Turkey',flag:'🇹🇷'}]},
+    {cost:1, label:'$1 tier', cls:'t1', teams:[{name:'Algeria',flag:'🇩🇿'},{name:'Australia',flag:'🇦🇺'},{name:'Bosnia',flag:'🇧🇦'},{name:'Czech Republic',flag:'🇨🇿'},{name:'Egypt',flag:'🇪🇬'},{name:'Ghana',flag:'🇬🇭'},{name:'Iran',flag:'🇮🇷'},{name:'Ivory Coast',flag:'🇨🇮'},{name:'Scotland',flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿'},{name:'South Korea',flag:'🇰🇷'},{name:'Tunisia',flag:'🇹🇳'}]},
+    {cost:0.5, label:'$0.50 tier', cls:'t05', teams:[{name:'Cape Verde',flag:'🇨🇻'},{name:'Curaçao',flag:'🇨🇼'},{name:'DR Congo',flag:'🇨🇩'},{name:'Haiti',flag:'🇭🇹'},{name:'Iraq',flag:'🇮🇶'},{name:'Jordan',flag:'🇯🇴'},{name:'New Zealand',flag:'🇳🇿'},{name:'Panama',flag:'🇵🇦'},{name:'Qatar',flag:'🇶🇦'},{name:'Saudi Arabia',flag:'🇸🇦'},{name:'South Africa',flag:'🇿🇦'},{name:'Uzbekistan',flag:'🇺🇿'}]},
+  ];
+
+  let selected = new Map();
+
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    ['rules','pick','leaderboard'].forEach((s,i) => { if(s===id) document.querySelectorAll('.nav-btn')[i].classList.add('active'); });
+    if (id === 'leaderboard') loadLeaderboard();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  function getTotal() { return [...selected.values()].reduce((s,v) => s+v.cost, 0); }
+
+  function buildTiers() {
+    document.getElementById('tierContainer').innerHTML = TIERS.map(tier => `
+      <div class="tier-section">
+        <div class="tier-header ${tier.cls}">
+          <span class="tier-label">${tier.label}</span>
+          <span class="tier-count">${tier.teams.length} team${tier.teams.length>1?'s':''}</span>
+        </div>
+        <div class="tier-body">
+          ${tier.teams.map(t => `
+            <button class="team-btn" id="btn-${t.name.replace(/[\s'çü]/g,'_')}"
+              onclick="toggleTeam('${t.name.replace(/'/g,"\\'")}',${tier.cost},'${t.flag}')">
+              <span class="team-flag">${t.flag}</span>
+              <span>${t.name}</span>
+              <span class="team-cost">$${tier.cost%1===0?tier.cost:tier.cost.toFixed(2)}</span>
+            </button>`).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  function toggleTeam(name, cost, flag) {
+    if (selected.has(name)) { selected.delete(name); }
+    else {
+      if (selected.size >= 5) return;
+      if (getTotal() + cost > CAP) return;
+      selected.set(name, {cost, flag});
+    }
+    updateSummary(); refreshButtons(); validateForm();
+  }
+
+  function updateSummary() {
+    const total = getTotal();
+    const over = total > CAP;
+    const pct = Math.min((total/CAP)*100, 100);
+    document.getElementById('selCount').textContent = selected.size;
+    document.getElementById('totalCost').textContent = '$'+total.toFixed(2);
+    document.getElementById('totalCost').className = 'cost-amt'+(over?' over':'');
+    document.getElementById('budgetRemain').textContent = over
+      ? '$'+(total-CAP).toFixed(2)+' over budget'
+      : '$'+(CAP-total).toFixed(2)+' remaining';
+    document.getElementById('barFill').style.width = pct+'%';
+    document.getElementById('barFill').className = 'bar-fill'+(over?' over':'');
+    document.getElementById('overMsg').className = 'over-msg'+(over?' show':'');
+    const chips = document.getElementById('selChips');
+    if (!selected.size) { chips.innerHTML='<span style="font-size:12px;color:#666;font-style:italic;">No teams selected yet</span>'; return; }
+    chips.innerHTML = [...selected.entries()].map(([n,v]) =>
+      `<span class="chip">${v.flag} ${n} <span style="opacity:.7">$${v.cost%1===0?v.cost:v.cost.toFixed(2)}</span></span>`).join('');
+  }
+
+  function refreshButtons() {
+    const total = getTotal(); const full = selected.size >= 5;
+    TIERS.forEach(tier => tier.teams.forEach(t => {
+      const btn = document.getElementById('btn-'+t.name.replace(/[\s'çü]/g,'_'));
+      if (!btn) return;
+      const isSel = selected.has(t.name);
+      btn.classList.toggle('selected', isSel);
+      const wouldExceed = !isSel && (total+tier.cost > CAP);
+      btn.classList.toggle('would-exceed', !isSel && wouldExceed);
+      btn.disabled = (full && !isSel) || (!isSel && wouldExceed);
+    }));
+  }
+
+  function validateForm() {
+    const fn = document.getElementById('firstName').value.trim();
+    const ln = document.getElementById('lastName').value.trim();
+    const em = document.getElementById('emailInput').value.trim();
+    document.getElementById('submitBtn').disabled =
+      !(fn && ln && em && /\S+@\S+\.\S+/.test(em) && selected.size===5 && getTotal()<=CAP);
+  }
+
+  function openModal() {
+    const fn = document.getElementById('firstName').value.trim();
+    const ln = document.getElementById('lastName').value.trim();
+    const tn = document.getElementById('teamName').value.trim();
+    const total = getTotal();
+    document.getElementById('modalTeams').innerHTML = [...selected.entries()].map(([n,v]) =>
+      `<span class="modal-chip">${v.flag} ${n}</span>`).join('');
+    document.getElementById('modalCost').innerHTML =
+      `Playing as: <strong>${fn} ${ln}${tn?' · '+tn:''}</strong><br>`+
+      `Entry fee: <strong>$${total.toFixed(2)}</strong> — 70% funds the wedding 💍<br>`+
+      `<span style="font-size:12px;color:#666;">Want another entry? Submit this one first, then come back and fill out the form again.</span>`;
+    document.getElementById('submitStatus').textContent = '';
+    document.getElementById('confirmBtn').disabled = false;
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+  async function confirmPicks() {
+    const btn = document.getElementById('confirmBtn');
+    const status = document.getElementById('submitStatus');
+    btn.disabled = true; btn.textContent = 'Submitting...';
+    status.textContent = 'Saving your picks...';
+    document.getElementById('cancelBtn').disabled = true;
+    const payload = {
+      firstName: document.getElementById('firstName').value.trim(),
+      lastName:  document.getElementById('lastName').value.trim(),
+      email:     document.getElementById('emailInput').value.trim(),
+      teamName:  document.getElementById('teamName').value.trim(),
+      teams:     [...selected.keys()],
+      entryFee:  parseFloat(getTotal().toFixed(2))
+    };
+    try {
+      const res = await fetch(API, {method:'POST', body:JSON.stringify(payload)});
+      const data = await res.json();
+      if (data.success) {
+        closeModal();
+        document.getElementById('submitBtn').style.display = 'none';
+        document.getElementById('successMsg').classList.add('show');
+      } else { throw new Error(data.error || 'Unknown error'); }
+    } catch(err) {
+      status.textContent = 'Something went wrong: '+err.message+'. Please try again.';
+      btn.disabled = false; btn.textContent = 'Confirm & submit';
+      document.getElementById('cancelBtn').disabled = false;
+    }
+  }
+
+  async function loadLeaderboard() {
+    const statusEl = document.getElementById('lbStatus');
+    const rowsEl = document.getElementById('lbRows');
+    statusEl.className = 'status-bar loading';
+    statusEl.innerHTML = '<i class="ti ti-loader spin"></i> Loading live data...';
+    rowsEl.innerHTML = '<div style="padding:1rem;text-align:center;color:#666;font-size:14px;">Fetching entries...</div>';
+    try {
+      const res = await fetch(API+'?action=leaderboard');
+      const data = await res.json();
+      const entries = data.entries || [];
+      const paidEntries = entries.filter(e => e.paid);
+      const paidTotal = paidEntries.reduce((s,e) => s+(parseFloat(e.entryFee)||0), 0);
+      const prize = paidTotal * 0.30;
+      document.getElementById('potAmt').textContent = '$'+prize.toFixed(2);
+      document.getElementById('potSub').textContent =
+        entries.length+' entries ('+paidEntries.length+' paid) · $'+paidTotal.toFixed(2)+' confirmed · $'+(paidTotal*0.70).toFixed(2)+' to wedding fund';
+      document.getElementById('p1').textContent = '$'+(prize*0.5).toFixed(2);
+      document.getElementById('p2').textContent = '$'+(prize*0.3).toFixed(2);
+      document.getElementById('p3').textContent = '$'+(prize*0.2).toFixed(2);
+      const sorted = entries.sort((a,b) => b.points-a.points);
+      if (!sorted.length) {
+        rowsEl.innerHTML = '<div style="padding:1.5rem;text-align:center;color:#666;font-size:14px;">No entries yet — be the first!</div>';
+        statusEl.className = 'status-bar ok';
+        statusEl.innerHTML = '<i class="ti ti-check"></i> Live data loaded';
+        return;
+      }
+      const rc=['top1','top2','top3'], rl=['r1','r2','r3'], med=['🥇','🥈','🥉'];
+      rowsEl.innerHTML = sorted.map((p,i) => `
+        <div class="lb-row ${rc[i]||''} ${p.paid?'':'unpaid'}">
+          <div class="rank ${rl[i]||''}">${i<3?med[i]:i+1}</div>
+          <div>
+            <div class="player-name">${p.firstName} ${p.lastName.charAt(0)}.</div>
+            <div class="player-sub">${p.teamName?p.teamName+' · ':''}${(p.teams||[]).join(' ')}</div>
+          </div>
+          <div style="text-align:center"><span class="paid-badge ${p.paid?'yes':'no'}">${p.paid?'Paid':'Pending'}</span></div>
+          <div><div class="pts">${p.points}</div><div class="pts-label">pts</div></div>
+        </div>`).join('');
+      statusEl.className = 'status-bar ok';
+      statusEl.innerHTML = '<i class="ti ti-check"></i> Live data · last refreshed '+new Date().toLocaleTimeString();
+    } catch(err) {
+      statusEl.className = 'status-bar error';
+      statusEl.innerHTML = '<i class="ti ti-alert-triangle"></i> Could not load data. <button class="refresh-btn" onclick="loadLeaderboard()">Retry</button>';
+      rowsEl.innerHTML = '';
+    }
+  }
+
+  buildTiers();
+</script>
+</body>
+</html>
