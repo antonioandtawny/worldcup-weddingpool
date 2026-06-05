@@ -423,6 +423,45 @@
 </head>
 <body>
 
+
+<!-- FLAG TICKER -->
+<div style="background:#155224;padding:12px 0;overflow:hidden;position:relative;width:100%;">
+  <div style="position:absolute;top:0;bottom:0;left:0;width:48px;background:linear-gradient(to right,#155224,transparent);z-index:2;pointer-events:none;"></div>
+  <div style="position:absolute;top:0;bottom:0;right:0;width:48px;background:linear-gradient(to left,#155224,transparent);z-index:2;pointer-events:none;"></div>
+  <div id="flagTrack" style="display:flex;gap:22px;width:max-content;animation:flagScroll 35s linear infinite;">
+  </div>
+</div>
+<style>
+  @keyframes flagScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  #flagTrack:hover { animation-play-state:paused; }
+  .fi { display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0; }
+  .fi span:first-child { font-size:1.7rem;line-height:1; }
+  .fi span:last-child  { font-size:10px;color:rgba(255,255,255,0.6);white-space:nowrap;font-family:'DM Sans',sans-serif; }
+</style>
+<script>
+(function(){
+  var FLAGS=[
+    {f:'🇦🇷',n:'Argentina'},{f:'🇧🇷',n:'Brazil'},{f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',n:'England'},{f:'🇫🇷',n:'France'},{f:'🇪🇸',n:'Spain'},
+    {f:'🇩🇪',n:'Germany'},{f:'🇵🇹',n:'Portugal'},{f:'🇳🇱',n:'Netherlands'},{f:'🇧🇪',n:'Belgium'},
+    {f:'🇨🇴',n:'Colombia'},{f:'🇳🇴',n:'Norway'},{f:'🇯🇵',n:'Japan'},{f:'🇲🇽',n:'Mexico'},
+    {f:'🇲🇦',n:'Morocco'},{f:'🇨🇭',n:'Switzerland'},{f:'🇺🇾',n:'Uruguay'},{f:'🇺🇸',n:'USA'},
+    {f:'🇦🇹',n:'Austria'},{f:'🇨🇦',n:'Canada'},{f:'🇭🇷',n:'Croatia'},{f:'🇪🇨',n:'Ecuador'},
+    {f:'🇵🇾',n:'Paraguay'},{f:'🇸🇳',n:'Senegal'},{f:'🇸🇪',n:'Sweden'},{f:'🇹🇷',n:'Turkey'},
+    {f:'🇩🇿',n:'Algeria'},{f:'🇦🇺',n:'Australia'},{f:'🇧🇦',n:'Bosnia'},{f:'🇨🇿',n:'Czech Republic'},
+    {f:'🇪🇬',n:'Egypt'},{f:'🇬🇭',n:'Ghana'},{f:'🇮🇷',n:'Iran'},{f:'🇨🇮',n:'Ivory Coast'},
+    {f:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',n:'Scotland'},{f:'🇰🇷',n:'South Korea'},{f:'🇹🇳',n:'Tunisia'},
+    {f:'🇨🇻',n:'Cape Verde'},{f:'🇨🇼',n:'Curaçao'},{f:'🇨🇩',n:'DR Congo'},{f:'🇭🇹',n:'Haiti'},
+    {f:'🇮🇶',n:'Iraq'},{f:'🇯🇴',n:'Jordan'},{f:'🇳🇿',n:'New Zealand'},{f:'🇵🇦',n:'Panama'},
+    {f:'🇶🇦',n:'Qatar'},{f:'🇸🇦',n:'Saudi Arabia'},{f:'🇿🇦',n:'South Africa'},{f:'🇺🇿',n:'Uzbekistan'}
+  ];
+  var track=document.getElementById('flagTrack');
+  var doubled=[].concat(FLAGS,FLAGS);
+  track.innerHTML=doubled.map(function(t){
+    return '<div class="fi"><span>'+t.f+'</span><span>'+t.n+'</span></div>';
+  }).join('');
+})();
+</script>
+
 <div class="hero">
   <div class="hero-badge">Antonio and Tawny's World Cup Pool</div>
   <h1>Pick Your Teams,<br><span>Fund the Love</span></h1>
