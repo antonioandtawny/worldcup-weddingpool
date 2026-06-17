@@ -273,7 +273,7 @@
   <div id="tab-history" class="tab-panel">
     <div class="card">
       <div class="card-title">Points update history</div>
-      <div class="card-sub">All updates applied this session. Undo reverses the points added — use carefully.</div>
+      <div class="card-sub">All updates saved to your Google Sheet. Undo reverses the points — use carefully. <button onclick="loadHistory()" style="background:none;border:none;color:var(--gp);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;text-decoration:underline;">Refresh</button></div>
       <div id="historyContent"><div style="color:var(--muted);font-size:14px;font-style:italic;">No updates applied yet this session.</div></div>
     </div>
   </div>
@@ -309,6 +309,7 @@
     document.getElementById('tab-'+id).classList.add('active');
     event.target.classList.add('active');
     if (id === 'leaderboard') loadLeaderboard();
+    if (id === 'history') loadHistory();
   }
 
   function buildTeamGrid() {
@@ -428,20 +429,56 @@
     } catch(err) { alert('Error: '+err.message); }
   }
 
-  function renderHistory() {
+  async function loadHistory() {
     const el = document.getElementById('historyContent');
-    if (!history.length) {
-      el.innerHTML = '<div style="color:var(--muted);font-size:14px;font-style:italic;">No updates applied yet this session.</div>';
-      return;
+    el.innerHTML = '<div style="color:var(--muted);font-size:14px;"><i class="ti ti-loader spin"></i> Loading...</div>';
+    try {
+      const data = await callAPI({action:'history'});
+      const rows = data.history || [];
+      if (!rows.length) {
+        el.innerHTML = '<div style="color:var(--muted);font-size:14px;font-style:italic;">No updates recorded yet.</div>';
+        return;
+      }
+      el.innerHTML = rows.map((h, i) => {
+        const isUndo = h.undo === 'YES';
+        const d = new Date(h.time);
+        const timeStr = d.toLocaleDateString() + ' · ' + d.toLocaleTimeString();
+        return `<div class="history-row">
+          <div>
+            <div class="history-stage" style="${isUndo?'color:#a32d2d;':''}">
+              ${isUndo?'↩ UNDO: ':''}${h.stage} · ${isUndo?'-':'+'} ${h.pts} pts · ${h.updated} player${h.updated!=1?'s':''} updated
+            </div>
+            <div class="history-teams">${h.teams} · ${timeStr}</div>
+          </div>
+          ${!isUndo ? `<button class="undo-btn" onclick="undoFromHistory('${h.stage}','${h.teams}',${h.pts})"><i class="ti ti-arrow-back-up"></i> Undo</button>` : ''}
+        </div>`;
+      }).join('');
+    } catch(err) {
+      el.innerHTML = '<div style="color:#a32d2d;font-size:14px;">Could not load history.</div>';
     }
-    el.innerHTML = history.map((h,i) => `
-      <div class="history-row">
-        <div>
-          <div class="history-stage">${h.stage} · +${h.pts} pts · ${h.updated} player${h.updated!==1?'s':''} updated</div>
-          <div class="history-teams">${h.teamList} · ${h.time}</div>
-        </div>
-        <button class="undo-btn" onclick="undoUpdate(${i})"><i class="ti ti-arrow-back-up"></i> Undo</button>
-      </div>`).join('');
+  }
+
+  async function undoFromHistory(stage, teamsStr, pts) {
+    const stageKey = Object.keys(STAGE_LABELS).find(k => STAGE_LABELS[k] === stage) || 'group';
+    const teams = teamsStr.split(', ');
+    if (!confirm('Undo: remove +' + pts + ' pts from players who had ' + teamsStr + '?')) return;
+    try {
+      const data = await callAPI({
+        action: 'updatePoints',
+        stage: stageKey,
+        teams: JSON.stringify(teams),
+        undo: 'true'
+      });
+      if (data.success) {
+        alert('Undone — ' + data.updated + ' player(s) had points reversed.');
+        loadHistory();
+      }
+    } catch(err) { alert('Error: ' + err.message); }
+  }
+
+  function renderHistory() {
+    // now loads from sheet — kept for compatibility
+    loadHistory();
   }
 
   async function loadLeaderboard() {
