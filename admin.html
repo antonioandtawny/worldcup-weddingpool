@@ -312,6 +312,29 @@
     if (id === 'history') loadHistory();
   }
 
+  function callAPI(params) {
+    return new Promise((resolve, reject) => {
+      const cbName = 'cb_' + Date.now();
+      const url = API + '?' + Object.keys(params).map(k =>
+        encodeURIComponent(k) + '=' + encodeURIComponent(params[k])
+      ).join('&') + '&callback=' + cbName;
+      const script = document.createElement('script');
+      const timeout = setTimeout(() => {
+        cleanup();
+        reject(new Error('Request timed out'));
+      }, 10000);
+      function cleanup() {
+        clearTimeout(timeout);
+        delete window[cbName];
+        if (script.parentNode) script.parentNode.removeChild(script);
+      }
+      window[cbName] = function(data) { cleanup(); resolve(data); };
+      script.onerror = () => { cleanup(); reject(new Error('Network error')); };
+      document.head.appendChild(script);
+      script.src = url;
+    });
+  }
+
   function buildTeamGrid() {
     document.getElementById('teamGrid').innerHTML = TEAMS.map(t => `
       <div class="team-check" id="tc-${t.name.replace(/[\s'çü]/g,'_')}" onclick="toggleTeam('${t.name.replace(/'/g,"\\'")}')">
@@ -359,15 +382,12 @@
     btn.innerHTML = '<i class="ti ti-loader spin"></i> Applying...';
     resultBox.style.display = 'none';
 
-    const payload = {
-      action: 'updatePoints',
-      stage: selectedStage,
-      teams: [...checkedTeams]
-    };
-
     try {
-      const res = await fetch(API, { method: 'POST', body: JSON.stringify(payload) });
-      const data = await res.json();
+      const data = await callAPI({
+        action: 'updatePoints',
+        stage: selectedStage,
+        teams: JSON.stringify([...checkedTeams])
+      });
       if (data.success) {
         const teamList = [...checkedTeams].map(n => { const t = TEAMS.find(x=>x.name===n); return t.flag+' '+n; }).join(', ');
         resultBox.className = 'result-box success';
@@ -414,13 +434,12 @@
       negativeMultiplier: -1
     };
     try {
-      const res = await fetch(API, { method: 'POST', body: JSON.stringify({
+      const data = await callAPI({
         action: 'updatePoints',
         stage: Object.keys(STAGE_LABELS).find(k => STAGE_LABELS[k] === entry.stage),
-        teams: entry.teams,
-        undo: true
-      })});
-      const data = await res.json();
+        teams: JSON.stringify(entry.teams),
+        undo: 'true'
+      });
       if (data.success) {
         history.splice(index, 1);
         renderHistory();
@@ -485,8 +504,7 @@
     const el = document.getElementById('lbContent');
     el.innerHTML = '<div style="color:var(--muted);font-size:14px;"><i class="ti ti-loader spin"></i> Loading...</div>';
     try {
-      const res = await fetch(API+'?action=leaderboard');
-      const data = await res.json();
+      const data = await callAPI({action:'leaderboard'});
       const entries = (data.entries || []).sort((a,b) => b.points-a.points);
       if (!entries.length) { el.innerHTML = '<div style="color:var(--muted);font-size:14px;font-style:italic;">No entries yet.</div>'; return; }
       const medals = ['🥇','🥈','🥉'];
